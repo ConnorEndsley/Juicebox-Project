@@ -19,3 +19,7 @@ VALUES
 DROP TABLE users;
 
  DROP TABLE IF EXISTS users;
+
+ UPDATE users
+ SET "name"='new name', "location"='new location'
+ WHERE id=2;
