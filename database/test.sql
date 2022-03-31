@@ -15,3 +15,7 @@ VALUES
  SELECT ID FROM users LIMIT 1;
 
  SELECT id, username FROM users WHERE username='albert' AND password='bertie99';
+
+DROP TABLE users;
+
+ DROP TABLE IF EXISTS users;
