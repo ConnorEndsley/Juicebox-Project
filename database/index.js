@@ -65,28 +65,74 @@ async function getAllUsers() {
     title,
     content
   }) {
-    try{
-
-    }catch (error) {
+    try {
+      const { rows: [ post ] } = await client.query(`
+        INSERT INTO posts("authorId", title, content) 
+        VALUES($1, $2, $3)
+        RETURNING *;
+      `, [authorId, title, content]);
+  
+      return post;
+    } catch (error) {
       throw error;
     }
   }
 
-  async function updatePost(id, {
-    title,
-    content,
-    active
-  }) {
-    try {
+  async function createTags(tagList) {
+    if (tagList.length === 0) { 
+      return; 
+    }
 
-    } catch (error) {
-      throw error
+    const insertValues = tagList.map(
+      (_, index) => `$${index + 1}`).join('), (')
+
+    const selectValues = tagList.map(
+      (_, index) => `$${index + 1}`).join(', ');
+
+  try{
+    await client.query(`
+    INSERT INTO tags(name)
+    VALUES (${insertValues}) 
+    ON CONFLICT (name) DO NOTHING;
+    `, tagList)
+
+    const { rows } = await client.query(`
+      SELECT * FROM tags
+      WHERE name
+      IN (${selectValues})   
+    `, tagList);
+
+    return rows;
+  }catch(error){
+    throw error
+  }}
+
+  async function updatePost(id, fields = {}) {
+    const setString = Object.keys(fields).map(
+      (key, index) => `"${key}"=$${ index + 1 }`
+    ).join(', ');
+
+    if (setString.length === 0) {
+      return;
+    }
+    try {
+      const { rows: [ post ] } = await client.query(`
+      UPDATE posts
+      SET ${setString }
+      WHERE id=${id}
+      RETURNING *;`, Object.values(fields));
+
+    return post;
+    }catch(error){
+      throw error;
     }
   };
   
   async function getAllPosts() {
     try{
-
+      const { rows } = await client.query(`SELECT * FROM posts;`);
+  
+      return rows;
     } catch(error){
       throw error
     }
@@ -94,7 +140,7 @@ async function getAllUsers() {
 
   async function getPostsByUser(userId) {
     try{
-      const { rows } = client.query(
+      const { rows } = await client.query(
         `
         SELECT * FROM posts
         WHERE "authorId"=${userId};
@@ -105,22 +151,22 @@ async function getAllUsers() {
     }
   }
 
-  async function getUserById(userId){
-    try{
-      const { rows : [user] } = client.query(
-        `
-        SELECT id,
-        username,
-        name,
-        location,
-        posts="${userId}
-        `);
-      if(!user){
+  async function getUserById(userId) {
+    try {
+      const { rows: [ user ] } = await client.query(`
+        SELECT id, username, name, location, active
+        FROM users
+        WHERE id=${ userId }
+      `);
+  
+      if (!user) {
         return null
-      } 
-      user.posts = await getPostsByUser(userId)
+      }
+  
+      user.posts = await getPostsByUser(userId);
+  
       return user;
-    } catch (error){
+    } catch (error) {
       throw error;
     }
   }
