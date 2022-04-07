@@ -1,15 +1,15 @@
 const express = require('express');
-const usersRouter = express.Router();
+const postsRouter = express.Router();
 const { getAllPosts } = require('../database');
 
 
-usersRouter.use((req, res, next) => {
+postsRouter.use((req, res, next) => {
     console.log("A request is being made to /posts");
   
     next(); 
   });
   
-  usersRouter.get('/', async (req, res) => {
+  postsRouter.get('/', async (req, res) => {
     const users = await getAllPosts();
   
     res.send({
@@ -17,4 +17,4 @@ usersRouter.use((req, res, next) => {
     });
   });
 
-module.exports = usersRouter;
+module.exports = postsRouter;

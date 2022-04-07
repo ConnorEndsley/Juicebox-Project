@@ -1,15 +1,15 @@
 const express = require('express');
-const usersRouter = express.Router();
+const tagsRouter = express.Router();
 const { getAllTags } = require('../database');
 
 
-usersRouter.use((req, res, next) => {
+tagsRouter.use((req, res, next) => {
     console.log("A request is being made to /tags");
   
     next(); 
   });
   
-  usersRouter.get('/', async (req, res) => {
+  tagsRouter.get('/', async (req, res) => {
     const users = await getAllTags();
   
     res.send({
@@ -17,4 +17,4 @@ usersRouter.use((req, res, next) => {
     });
   });
 
-module.exports = usersRouter;
+module.exports = tagsRouter;
