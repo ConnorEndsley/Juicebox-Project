@@ -4,6 +4,9 @@ const { getAllUsers, getAllPosts, getAllTags } = require('../database');
 const jwt = require('jsonwebtoken');
 const { getUserById } = require('../database');
 const { JWT_SECRET } = process.env
+const usersRouter = require('./users');
+const postsRouter = require('./posts');
+const tagsRouter = require('./tags');
 
 apiRouter.use(async (req, res, next) => {
     const prefix = 'Bearer ';
@@ -32,15 +35,20 @@ apiRouter.use(async (req, res, next) => {
     }
   });
 
-const usersRouter = require('./users');
-const postsRouter = require('./posts');
-const tagsRouter = require('./tags');
+  apiRouter.use((req, res, next) => {
+    if (req.user) {
+      console.log("User is set:", req.user);
+    }
+  
+    next();
+  });
 
-apiRouter.use('/users', usersRouter);
 
-apiRouter.use('/posts', postsRouter);
+  apiRouter.use('/users', usersRouter);
 
-apiRouter.use('/tags', tagsRouter)
+  apiRouter.use('/posts', postsRouter);
+  
+  apiRouter.use('/tags', tagsRouter)
 
 
 
@@ -52,6 +60,8 @@ tagsRouter.get('/', async (req, res) => {
     })
 })
 
+
+
 apiRouter.use((error, req, res, next) => {
     res.send({
         name:error.name,
@@ -59,4 +69,8 @@ apiRouter.use((error, req, res, next) => {
     });
 });
 
+
+
 module.exports = apiRouter;
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDkzNzc3MjV9.h-11K3ekN9RHdjGdLdf412HUTPpzpsmk-sNd88ighnQ
