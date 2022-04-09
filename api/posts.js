@@ -1,6 +1,6 @@
 const express = require('express');
 const postsRouter = express.Router();
-const { getAllPosts, createPost } = require('../database');
+const { getAllPosts, createPost, updatePost, getPostById } = require('../database');
 const {requireUser} = require('./utils')
 
 postsRouter.post('/', requireUser, async (req, res, next) => {
@@ -45,6 +45,46 @@ postsRouter.use((req, res, next) => {
     });
   });
 
+  postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
+    const { postId } = req.params;
+    const { title, content, tags } = req.body;
+  
+    const updateFields = {};
+  
+    if (tags && tags.length > 0) {
+      updateFields.tags = tags.trim().split(/\s+/);
+    }
+  
+    if (title) {
+      updateFields.title = title;
+    }
+  
+    if (content) {
+      updateFields.content = content;
+    }
+  
+    try {
+      const originalPost = await getPostById(postId);
+  
+      if (originalPost.author.id === req.user.id) {
+        const updatedPost = await updatePost(postId, updateFields);
+        res.send({ post: updatedPost })
+      } else {
+        next({
+          name: 'UnauthorizedUserError',
+          message: 'You cannot update a post that is not yours'
+        })
+      }
+    } catch ({ name, message }) {
+      next({ name, message });
+    }
+  });
+
 module.exports = postsRouter;
 
 // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU"
+
+// curl http://localhost:3000/api/posts/1 -X PATCH -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU' -H 'Content-Type: application/json' -d '{"title": "updating my old stuff", "tags": "#oldisnewagain"}'
+
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU
