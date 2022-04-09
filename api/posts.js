@@ -38,11 +38,18 @@ postsRouter.use((req, res, next) => {
   });
   
   postsRouter.get('/', async (req, res) => {
-    const users = await getAllPosts();
-  
-    res.send({
-      users
+    try{
+    const allPosts = await getAllPosts();
+    const posts = allPosts.filter(post => {
+      return post.active || (req.user && post.author.id === req.user.id);
     });
+
+    res.send({
+      posts
+    });
+  } catch({name, message}) {
+  next({name, message})
+  }
   });
 
   postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
@@ -80,6 +87,29 @@ postsRouter.use((req, res, next) => {
     }
   });
 
+  postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
+    try {
+      const post = await getPostById(req.params.postId);
+  
+      if (post && post.author.id === req.user.id) {
+        const updatedPost = await updatePost(post.id, { active: false });
+  
+        res.send({ post: updatedPost });
+      } else {
+        next(post ? { 
+          name: "UnauthorizedUserError",
+          message: "You cannot delete a post which is not yours"
+        } : {
+          name: "PostNotFoundError",
+          message: "That post does not exist"
+        });
+      }
+  
+    } catch ({ name, message }) {
+      next({ name, message })
+    }
+  });
+
 module.exports = postsRouter;
 
 // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU"
@@ -88,3 +118,7 @@ module.exports = postsRouter;
 
 
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU
+
+// curl http://localhost:3000/api/posts/1 -X DELETE -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU'
+
+// curl http://localhost:3000/api/posts -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU'
