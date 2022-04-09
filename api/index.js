@@ -19,7 +19,7 @@ apiRouter.use(async (req, res, next) => {
   
       try {
         const { id } = jwt.verify(token, JWT_SECRET);
-  
+        console.log(id)
         if (id) {
           req.user = await getUserById(id);
           next();
@@ -46,11 +46,11 @@ apiRouter.use(async (req, res, next) => {
 
   apiRouter.use('/users', usersRouter);
 
+
   apiRouter.use('/posts', postsRouter);
   
   apiRouter.use('/tags', tagsRouter)
-
-
+  
 
 tagsRouter.get('/', async (req, res) => {
     const tags = await getAllTags();
@@ -59,7 +59,6 @@ tagsRouter.get('/', async (req, res) => {
         tags
     })
 })
-
 
 
 apiRouter.use((error, req, res, next) => {
