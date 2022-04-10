@@ -88,6 +88,4 @@ usersRouter.use((req, res, next) => {
 
 module.exports = usersRouter;
 
-// curl http://localhost:3000/api -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MTYzMzR9.MQVF4CUTRVV6vo944HQV6Sh7W27W1QngXih8URvBLms"
 
-// curl https://fathomless-crag-63564.herokuapp.com/api/posts

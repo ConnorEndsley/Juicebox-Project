@@ -112,13 +112,3 @@ postsRouter.use((req, res, next) => {
 
 module.exports = postsRouter;
 
-// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU"
-
-// curl http://localhost:3000/api/posts/1 -X PATCH -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU' -H 'Content-Type: application/json' -d '{"title": "updating my old stuff", "tags": "#oldisnewagain"}'
-
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU
-
-// curl http://localhost:3000/api/posts/1 -X DELETE -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU'
-
-// curl http://localhost:3000/api/posts -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhbGJlcnQiLCJpYXQiOjE2NDk1MjA4NjcsImV4cCI6MTY1MDEyNTY2N30.oxz-fs1WCmDBaYun0r-nnqscNT1QkUh1eWIhnP362NU'

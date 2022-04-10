@@ -50,7 +50,7 @@ apiRouter.use(async (req, res, next) => {
   apiRouter.use('/posts', postsRouter);
   
   apiRouter.use('/tags', tagsRouter)
-  
+
 
 tagsRouter.get('/', async (req, res) => {
     const tags = await getAllTags();
@@ -72,4 +72,3 @@ apiRouter.use((error, req, res, next) => {
 
 module.exports = apiRouter;
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NDkzNzc3MjV9.h-11K3ekN9RHdjGdLdf412HUTPpzpsmk-sNd88ighnQ
