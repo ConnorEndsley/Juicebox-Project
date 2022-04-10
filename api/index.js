@@ -8,6 +8,8 @@ const usersRouter = require('./users');
 const postsRouter = require('./posts');
 const tagsRouter = require('./tags');
 
+
+//middleware for our token authentication
 apiRouter.use(async (req, res, next) => {
     const prefix = 'Bearer ';
     const auth = req.header('Authorization');

@@ -3,6 +3,8 @@ const postsRouter = express.Router();
 const { getAllPosts, createPost, updatePost, getPostById } = require('../database');
 const {requireUser} = require('./utils')
 
+
+// route to post 
 postsRouter.post('/', requireUser, async (req, res, next) => {
 
   const { title, content, tags = "" } =req.body;
@@ -27,8 +29,6 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
   } catch (error) {
     next({name: "You need a username", message: "Working on it"})
   }
-
-  // res.send({ message: 'under construction' });
 });
 
 postsRouter.use((req, res, next) => {
@@ -37,6 +37,9 @@ postsRouter.use((req, res, next) => {
     next(); 
   });
   
+
+
+  // route to GET posts
   postsRouter.get('/', async (req, res) => {
     try{
     const allPosts = await getAllPosts();
@@ -52,12 +55,14 @@ postsRouter.use((req, res, next) => {
   }
   });
 
+
+  // route to patch posts
   postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
     const { postId } = req.params;
     const { title, content, tags } = req.body;
   
     const updateFields = {};
-  
+    //if there is a tag
     if (tags && tags.length > 0) {
       updateFields.tags = tags.trim().split(/\s+/);
     }
@@ -69,7 +74,8 @@ postsRouter.use((req, res, next) => {
     if (content) {
       updateFields.content = content;
     }
-  
+    // try either updating if it is the user
+    //otherwise, return errors
     try {
       const originalPost = await getPostById(postId);
   
@@ -87,15 +93,20 @@ postsRouter.use((req, res, next) => {
     }
   });
 
+
+  // route to delete posts
   postsRouter.delete('/:postId', requireUser, async (req, res, next) => {
     try {
       const post = await getPostById(req.params.postId);
   
+      //if post and posts author are the user
       if (post && post.author.id === req.user.id) {
+        // update the post, defaulted false
         const updatedPost = await updatePost(post.id, { active: false });
   
         res.send({ post: updatedPost });
       } else {
+        // otherwise return error messages
         next(post ? { 
           name: "UnauthorizedUserError",
           message: "You cannot delete a post which is not yours"

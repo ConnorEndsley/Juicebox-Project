@@ -3,13 +3,15 @@ const usersRouter = express.Router();
 const { getAllUsers, getUserByUsername, createUsers } = require('../database');
 const jwt = require('jsonwebtoken');
 
-
+// make request to use the route to the user
 usersRouter.use((req, res, next) => {
     console.log("A request is being made to /users");
   
     next(); 
   });
   
+
+  // get all users
   usersRouter.get('/', async (req, res) => {
     const users = await getAllUsers();
   
@@ -18,6 +20,8 @@ usersRouter.use((req, res, next) => {
     });
   });
 
+
+  // post the users username and password when they attempt to log in
   usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
@@ -50,6 +54,8 @@ usersRouter.use((req, res, next) => {
     }
   })
 
+
+  // authenticate the user, return a jwt
   usersRouter.post('/register', async (req, res, next) => {
     const { username, password, name, location } = req.body;
   
